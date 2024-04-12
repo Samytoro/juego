@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juego Infantil</title>
+<style>
+  /* Estilos CSS */
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #fceaff; /* Fondo rosa claro */
+    padding-top: 50px;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .image-box img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+  }
+
+  .letter-box {
+    margin-bottom: 20px;
+  }
+
+  .letter-box .letter {
+    display: inline-block;
+    font-size: 24px;
+    background-color: #fff; /* Fondo blanco */
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+  }
+
+  .answer-box {
+    margin-bottom: 20px;
+  }
+
+  .answer-box .letter-slot {
+    display: inline-block;
+    font-size: 24px;
+    background-color: #ffd6f2; /* Fondo rosa claro */
+    padding: 10px;
+    margin: 5px;
+    border: 2px dashed #ff80c0; /* Borde rosa */
+  }
+
+  .message {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff0040; /* Rojo */
+    margin-bottom: 20px;
+  }
+
+  .points {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0066ff; /* Azul */
+    margin-bottom: 20px;
+  }
+
+  .restart-button {
+    font-size: 16px;
+    padding: 10px 20px;
+    background-color: #ff80c0; /* Rosa */
+    color: #fff; /* Texto blanco */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  .play-again-button {
+    font-size: 24px;
+    padding: 20px 40px;
+    background-color: #ff80c0; /* Rosa */
+    color: #fff; /* Texto blanco */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 50px;
+  }
+</style>
+</head>
+<body>
+<h1>Aprendiendo a leer</h1>
+<div class="container">
+  <div class="image-box">
+    <!-- Aquí va tu imagen -->
+  </div>
+  <div class="letter-box"></div>
+  <div class="answer-box"></div>
+  <div class="message"></div>
+  <div class="points">Puntos: <span id="points">0</span></div> <!-- Aquí mostraremos los puntos -->
+  <button class="restart-button" style="display: none;">Reiniciar</button>
+  <button class="play-again-button" style="display: none;">Jugar de Nuevo</button>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const words = [
+    { word: "memo", image: "memo.jpg" },
+    { word: "mama", image: "mama.jpg" },
+    { word: "mimo", image: "mimo.jpg" },
+    { word: "mima", image: "mima.jpg" },
+    { word: "amo", image: "amo.jpg" },
+    { word: "mio", image: "mio.jpg" },
+    { word: "mia", image: "mia.jpg" },
+    { word: "eme", image: "eme.jpg" },
+    { word: "mariposa", image: "mariposa.jpg" },
+    { word: "momia", image: "momia.jpg" }
+  ];
+  let currentWordIndex = 0;
+  let points = 0;
+  let lettersPlaced = 0;
+  
+  const letterBox = document.querySelector(".letter-box");
+  const answerBox = document.querySelector(".answer-box");
+  const message = document.querySelector(".message");
+  const pointsDisplay = document.getElementById("points");
+  const restartButton = document.querySelector(".restart-button");
+  const playAgainButton = document.querySelector(".play-again-button");
+  
+  function shuffleWord(word) {
+    return word.split('').sort(function() { return 0.5 - Math.random() }).join('');
+  }
+
+  function displayLetters(word) {
+    word.split('').forEach(letter => {
+      const letterButton = document.createElement("div");
+      letterButton.textContent = letter;
+      letterButton.classList.add("letter");
+      letterBox.appendChild(letterButton);
+      letterButton.addEventListener("click", function() {
+        const targetSlot = answerBox.querySelector(`[data-letter=""]`);
+        if (targetSlot && lettersPlaced < words[currentWordIndex].word.length) {
+          targetSlot.textContent = letter;
+          targetSlot.setAttribute("data-letter", letter);
+          lettersPlaced++;
+          if (lettersPlaced === words[currentWordIndex].word.length) {
+            checkAnswer();
+          }
+        }
+      });
+    });
+  }
+
+  function displayAnswerBoxes(word) {
+    word.split('').forEach(() => {
+      const answerSlot = document.createElement("div");
+      answerSlot.classList.add("letter-slot");
+      answerSlot.setAttribute("data-letter", "");
+      answerBox.appendChild(answerSlot);
+    });
+  }
+
+  function checkAnswer() {
+    const answerSlots = Array.from(document.querySelectorAll(".answer-box .letter-slot"));
+    const userWord = answerSlots.map(slot => slot.textContent).join('').toLowerCase();
+    const normalizedCorrectWord = normalizeWord(words[currentWordIndex].word).toLowerCase();
+    if (userWord === normalizedCorrectWord) {
+      message.textContent = "¡Lo has logrado!";
+      points++;
+      pointsDisplay.textContent = points;
+      currentWordIndex++;
+      if (currentWordIndex < words.length) {
+        startNextWord();
+      } else {
+        message.textContent = `¡Felicidades! Has completado todas las palabras. Total de palabras buenas: ${points}`;
+        playAgainButton.style.display = "inline-block";
+      }
+    } else {
+      message.textContent = "Inténtalo nuevamente. ¡No te rindas!";
+    }
+    lettersPlaced = 0;
+    answerSlots.forEach(slot => {
+      slot.textContent = "";
+      slot.setAttribute("data-letter", "");
+    });
+  }
+
+  function startNextWord() {
+    letterBox.innerHTML = "";
+    answerBox.innerHTML = "";
+    displayLetters(shuffleWord(words[currentWordIndex].word));
+    displayAnswerBoxes(words[currentWordIndex].word);
+    displayImage(words[currentWordIndex]);
+  }
+
+  function normalizeWord(word) {
+    return word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function displayImage(wordInfo) {
+    const imageBox = document.querySelector(".image-box");
+    imageBox.innerHTML = "";
+    const image = document.createElement("img");
+    image.src = "images/" + wordInfo.image;
+    image.alt = wordInfo.word;
+    imageBox.appendChild(image);
+  }
+
+  restartButton.addEventListener("click", function() {
+    currentWordIndex = 0;
+    points = 0;
+    lettersPlaced = 0;
+    pointsDisplay.textContent = points;
+    restartButton.style.display = "none";
+    playAgainButton.style.display = "none";
+    startNextWord();
+  });
+
+  playAgainButton.addEventListener("click", function() {
+    currentWordIndex = 0;
+    points = 0;
+    lettersPlaced = 0;
+    pointsDisplay.textContent = points;
+    restartButton.style.display = "none";
+    playAgainButton.style.display = "none";
+    startNextWord();
+  });
+
+  displayLetters(shuffleWord(words[currentWordIndex].word));
+  displayAnswerBoxes(words[currentWordIndex].word);
+  displayImage(words[currentWordIndex]);
+});
+</script>
+</body>
+</html>
