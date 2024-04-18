@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LETRA M</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+<header class="banner">
+  <h1>LETRA M</h1>
+  <h2>ma - me - mi - mo - mu</h2>
+    <nav class="menu">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="letra_m.html">Letra M</a></li>
+        <li><a href="letra_p.html">Letra P</a></li>
+        <li><a href="letra_s.html">Letra S</a></li>
+      </ul>
+    </nav>
+</header>
+
+<div class="container">
+  <div class="image-box">
+    <img src="images/memo.jpg" alt="Memo">
+    <button class="audio-button" onclick="playAudio('audio/memo.mp3')">
+      <img src="audio-icon.png" alt="Reproducir audio">
+    </button>
+  </div>
+  <div class="letter-box"></div>
+  <div class="answer-box"></div>
+  <div class="message"></div>
+  <div class="points">Puntos: <span id="points">0</span></div> <!-- Aquí mostraremos los puntos -->
+  <button class="restart-button" style="display: none;">Reiniciar</button>
+  <button class="play-again-button" style="display: none;">Jugar de Nuevo</button>
+</div>
+<footer>
+  © 2024 Jugando con Emma. Todos los derechos reservados.
+</footer>
+
+<script src="codigo_letra_m.js"></script>
+
+</body>
+</html>
